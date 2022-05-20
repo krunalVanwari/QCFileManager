@@ -4,7 +4,7 @@ public struct QCFileManager {
     
     // init
     private init() {}
-    static let shared = QCFileManager()
+    public static let shared = QCFileManager()
     
     // private manager properties
     internal let fm = FileManager.default
@@ -13,6 +13,14 @@ public struct QCFileManager {
     }
     
     // public functions
+    
+    /// saveData(data:name:dataExtension:insideFolder:)
+    /// This method helps in saving data type to document directry. You should give a nuique name to it that does't matches any previous data saved otherwise the data will not be saved. You can also save data by creating a folder, you just need to provide the name of the the folder.
+    /// - Parameters:
+    ///   - data: Data which you want to save in document directory
+    ///   - name: name of this file ( must be unique )
+    ///   - dataExtension: an optional field that provides extension to the file
+    ///   - insideFolder: an optional filed that, if you want ot save the file inside a folder then specify that folders name if the folder is already present it will be saved there or a new folder will be created
     public func saveData(data:Data,name:String,dataExtension:String?=nil,insideFolder:String?=nil) {
         let fullName = "\(name)\(dataExtension ?? "")"
         if let fileURL = createUrlPath(directoryURL:getFolderURL(from: insideFolder),fullName),!isPathAlreadyPresent(fileURL.path) {
@@ -25,7 +33,14 @@ public struct QCFileManager {
             NSLog("Failed to create path |or| Path is already present")
         }
     }
-        
+    
+    /// getData(name: dataExtension: insideFolder:)
+    /// return Data? that is present in document directory matching the name and extension ( if given ) and if it was sved inside a folder you can specify that as well
+    /// - Parameters:
+    ///   - name: name of file that was saved to document directory
+    ///   - dataExtension: extension that was given to the file at the time of saving the file
+    ///   - insideFolder: optional field if the file was saved inside an folder
+    /// - Returns: return the Data if found else return nil
     public func getData(name:String,dataExtension:String?=nil,insideFolder:String?=nil) -> Data? {
         let fullName = "\(name)\(dataExtension ?? "")"
         if let fileURL = createUrlPath(directoryURL:getFolderURL(from: insideFolder),fullName) {
@@ -33,8 +48,15 @@ public struct QCFileManager {
             return data
         }
         return nil
+        
     }
     
+    /// deleteData(name:dataExtension:insideFolder:)
+    /// deletes the file at document directory
+    /// - Parameters:
+    ///   - name: name of file that was saved to document directory
+    ///   - dataExtension: extension that was given to the file at the time of saving the file
+    ///   - insideFolder: optional field if the file was saved inside an folder
     public func deleteData(name:String,dataExtension:String?=nil,insideFolder:String?=nil) {
         let fullName = "\(name)\(dataExtension ?? "")"
         if let fileURL = createUrlPath(directoryURL:getFolderURL(from: insideFolder),fullName) {
@@ -46,6 +68,10 @@ public struct QCFileManager {
         }
     }
     
+    /// getAllDataList(from:)
+    /// gives all the files that are present, but only from inside the folder
+    /// - Parameter folderName: name of the folder inside which the files are saved
+    /// - Returns: return an array of Data which were found inside folder. an empty array if did't found any
     public func getAllDataList(from folderName:String) -> [Data] {
         
         var allData:[Data] = []
@@ -61,6 +87,7 @@ public struct QCFileManager {
         return allData
     }
     
+    /// prints all the files that are present inside  documet directory
     public func printAllAvailableFilesInDirectory() {
         guard let docURL = DDURL else {return}
         
